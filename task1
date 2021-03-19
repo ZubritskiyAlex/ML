@@ -2,9 +2,10 @@ from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
 from docx import Document
+import cv2
 
 
-PDF_file = "train.pdf"
+PDF_file = "d.pdf"
 pages = convert_from_path(PDF_file, 500)
 
 image_counter = 1
@@ -25,10 +26,14 @@ for i in range(1, filelimit + 1):
     text = text.replace('-\n', '')
     f.write(text)
 
+img = cv2.imread(PDF_file)
 document = Document(outfile)
+
 for p in document.paragraphs:
     for run in p.runs:
         f.write(run.text)
         f.write(run.italic)
         f.write(run.bold)
+        text = pytesseract.image_to_string(img)
+        f.write(text)
 f.close()
