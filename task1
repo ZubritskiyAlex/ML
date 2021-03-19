@@ -3,6 +3,7 @@ import pytesseract
 from pdf2image import convert_from_path
 from docx import Document
 import cv2
+import PyPDF2
 
 
 PDF_file = "d.pdf"
@@ -15,6 +16,16 @@ for page in pages:
     page.save(filename, 'JPEG')
     image_counter = image_counter + 1
 
+# delete annotations
+
+with open(PDF_file, 'rb') as pdf_obj:
+    pdf = PyPDF2.PdfFileReader(pdf_obj)
+    out = PyPDF2.PdfFileWriter.removeLinks()
+    for page in pdf.pages:
+        page.scale(2, 2)
+        out.addPage(page)
+    with open('new.pdf', 'wb') as f:
+        out.write(f)
 
 filelimit = image_counter - 1
 outfile = "out_text.docx"
